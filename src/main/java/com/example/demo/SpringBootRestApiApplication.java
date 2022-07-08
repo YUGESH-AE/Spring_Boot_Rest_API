@@ -11,9 +11,9 @@ public class SpringBootRestApiApplication implements WebMvcConfigurer {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBootRestApiApplication.class, args);
 	}
-	@Override
-	public void addCorsMappings(CorsRegistry registry){
-		registry.addMapping("/**").allowedMethods("GET","POST","PUT","DELETE");
-	}
+// 	@Override
+// 	public void addCorsMappings(CorsRegistry registry){
+// 		registry.addMapping("/**").allowedMethods("GET","POST","PUT","DELETE");
+// 	}
 
 }
