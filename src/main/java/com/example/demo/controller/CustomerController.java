@@ -1,13 +1,16 @@
 package com.example.demo.controller;
 
 import com.example.demo.CustomerService.CustomerService;
-import com.example.demo.dto.CustomerDto;
 import com.example.demo.entity.Customer;
+import com.example.demo.exception.NoSuchCustomer;
+import com.example.demo.utility.CommonMethods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
@@ -22,8 +25,8 @@ public class CustomerController {
      */
 
     @PostMapping(consumes = "application/json",path ="/insert" )
-    public ResponseEntity<Customer> insert(@RequestBody CustomerDto customerDto){
-        Customer customerDto1=customerService.insertCustomer(CustomerDto.customerPrepare(customerDto));
+    public ResponseEntity<Customer> insert(@Valid @RequestBody Customer customer){
+        Customer customerDto1=customerService.insertCustomer(customer);
         return new ResponseEntity<>(customerDto1, HttpStatus.OK);
     }
 
@@ -42,7 +45,7 @@ public class CustomerController {
      */
 
     @DeleteMapping(path = "/delete/{phoneNo}")
-    public ResponseEntity<String> delete(@PathVariable("phoneNo") Long phoneNo){
+    public ResponseEntity<String> delete(@Valid @PathVariable("phoneNo") @Pattern(regexp = "[0-9]{10}",message = CommonMethods.phone) Long phoneNo) throws NoSuchCustomer {
         String response= customerService.deleteCustomer(phoneNo);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
@@ -52,9 +55,9 @@ public class CustomerController {
      */
 
     @PutMapping(path = "/update")
-    public ResponseEntity<Customer> update(@RequestBody CustomerDto customerDto){
-        Customer customer=customerService.updateCustomer(CustomerDto.customerPrepare(customerDto));
-        return new ResponseEntity<>(customer,HttpStatus.OK);
+    public ResponseEntity<Customer> update(@Valid @RequestBody Customer customer) throws NoSuchCustomer {
+        Customer customer1=customerService.updateCustomer(customer);
+        return new ResponseEntity<>(customer1,HttpStatus.OK);
     }
 
     /*
@@ -62,8 +65,8 @@ public class CustomerController {
      */
 
     @GetMapping(path = "/getparticular")
-    public ResponseEntity<Customer> getParticular(@RequestParam("name")String name,@RequestParam("age")Integer age){
-        Customer customer=customerService.findbyNameAndAge(name,age);
-        return new ResponseEntity<>(customer,HttpStatus.OK);
+    public ResponseEntity<Customer> getParticular(@Valid @RequestParam("name")String name, @RequestParam("age")Integer age){
+       ResponseEntity<Customer> customer=customerService.findbyNameAndAge(name,age);
+       return customer;
     }
 }
